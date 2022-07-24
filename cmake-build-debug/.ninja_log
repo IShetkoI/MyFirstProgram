@@ -1,0 +1,7 @@
+# ninja log v5
+42	67	1658687028559932112	MyFirstProgram	988f5a13a4ee46ef
+0	42	1658687028535932163	CMakeFiles/MyFirstProgram.dir/main.c.o	3680e27cc5cf7faa
+0	30	1658687052023882646	CMakeFiles/MyFirstProgram.dir/main.c.o	3680e27cc5cf7faa
+30	51	1658687052043882605	MyFirstProgram	988f5a13a4ee46ef
+1	37	1658687203887612036	CMakeFiles/MyFirstProgram.dir/main.c.o	3680e27cc5cf7faa
+37	59	1658687203911612000	MyFirstProgram	988f5a13a4ee46ef

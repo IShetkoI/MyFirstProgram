@@ -40,33 +40,6 @@ void resize_array(size_t n){
     struct_array = realloc(struct_array, n * sizeof *struct_array);
 }
 
-//void squeeze(char string1[], const char string2[]){
-//    int i,k,j;
-//    for(k=0;string2[k] != '\0';k++){
-//        for(i=j=0;string1[i] != '\0';i++,i++){
-//            if(string1[i] == string2[k]){
-//                string1[j++]=string1[i];
-//            }
-//        }
-//    }
-//}
-
-//char* split_string(char *string){
-//    char *result[3];
-//    int number_word = 0;
-//    char word_split[33];
-//    char *p1 = word_split;
-//    unsigned long len = strlen(string);
-//    for(int i = 1; i < len; i++){
-//        if(string[i] == ',' && string[i+1] == ' '){
-//            strncpy(word_split, string, i);
-//            result[number_word++] = p1;
-//            squeeze(string, word_split);
-//        }
-//    }
-//    return &result;
-//}
-
 struct patient get_data(void){
     struct patient thisdata;
     char str [100];

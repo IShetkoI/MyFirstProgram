@@ -76,9 +76,9 @@ struct patient get_data(void){
     // строки str
     char *istr;
     printf ("Input FIO:\n");
-    getchar();
     fgets(str, 100, stdin);
-    fflush(stdin);
+    fseek(stdin,0,SEEK_END);
+    printf(str);
     // Выделение первой части строки
     istr = strtok (str,sep);
     strcpy(thisdata.cFullName, istr);
@@ -91,6 +91,7 @@ struct patient get_data(void){
     if (istr != NULL)
     {
         istr = strtok (NULL,sep);
+        istr[strlen(istr) - 1] = 0;
         strcpy(thisdata.cDiagnosis, istr);
     }
     return thisdata;
@@ -107,10 +108,12 @@ void Decrease(){
 }
 
 void Output(size_t n){
+    puts("-------------------------------------------------------------------------");
+    puts("|\t#\t|\tFCs\t|\tWard\t|\tDiagnosis\t|");
+    puts("-------------------------------------------------------------------------");
     for(int i = 0; i < n; i++){
-        puts(struct_array[i].cFullName);
-        puts(struct_array[i].cRoomNumber);
-        puts(struct_array[i].cDiagnosis);
+        printf("|\t%i\t|\t%s\t|\t%s\t|\t%s%*s\t|\n", i, struct_array[i].cFullName, struct_array[i].cRoomNumber, struct_array[i].cDiagnosis, 5, " ");
+        puts("-------------------------------------------------------------------------");
     }
 }
 

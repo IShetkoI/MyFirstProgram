@@ -1,3 +1,3 @@
-/home/ivan/Documents/CLionProjects/MyFirstProgram/cmake-build-debug/CMakeFiles/MyFirstProgram.dir
-/home/ivan/Documents/CLionProjects/MyFirstProgram/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/ivan/Documents/CLionProjects/MyFirstProgram/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+D:/Files/CPP/GitHub/cmake-build-debug/CMakeFiles/MyFirstProgram.dir
+D:/Files/CPP/GitHub/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/Files/CPP/GitHub/cmake-build-debug/CMakeFiles/rebuild_cache.dir

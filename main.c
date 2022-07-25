@@ -20,8 +20,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define sHello(bFirstLaunch) ((bFirstLaunch) ? ("Hello, you have started the \"Hospital patient database\".\nTo get help, type \"-h\" and press \"Enter\"\n\nWhat can I do for you?") : ("\n\nWhat can I do for you?"))
-#define sHelp "When you type \"-i\" I will prompt you to enter the new patient's data, viz: The patient's name, room number, and diagnosis.\n\nBy typing \"-d\" I will prompt you to enter the name of the patient to be removed from the database.\n\nIf you type \"-all\" I will display a table with all the patients in it.\n\nIf you type \"-e\" I will terminate the program."
+#define sHello(bFirstLaunch) ((bFirstLaunch) ? ("\nHello, you have started the \"Hospital patient database\".\nTo get help, type \"-h\" and press \"Enter\"\n\nWhat can I do for you?") : ("\nWhat can I do for you?"))
+#define sHelp "\nWhen you type \"-i\" I will prompt you to enter the new patient's data, viz: The patient's name, room number, and diagnosis.\n\nBy typing \"-d\" I will prompt you to enter the name of the patient to be removed from the database.\n\nIf you type \"-all\" I will display a table with all the patients in it.\n\nIf you type \"-e\" I will terminate the program."
 
 struct patient *struct_array;
 int size_array = 0;
@@ -40,45 +40,17 @@ void resize_array(size_t n){
     struct_array = realloc(struct_array, n * sizeof *struct_array);
 }
 
-//void squeeze(char string1[], const char string2[]){
-//    int i,k,j;
-//    for(k=0;string2[k] != '\0';k++){
-//        for(i=j=0;string1[i] != '\0';i++,i++){
-//            if(string1[i] == string2[k]){
-//                string1[j++]=string1[i];
-//            }
-//        }
-//    }
-//}
-
-//char* split_string(char *string){
-//    char *result[3];
-//    int number_word = 0;
-//    char word_split[33];
-//    char *p1 = word_split;
-//    unsigned long len = strlen(string);
-//    for(int i = 1; i < len; i++){
-//        if(string[i] == ',' && string[i+1] == ' '){
-//            strncpy(word_split, string, i);
-//            result[number_word++] = p1;
-//            squeeze(string, word_split);
-//        }
-//    }
-//    return &result;
-//}
-
 struct patient get_data(void){
     struct patient thisdata;
     char str [100];
-   // Набор символов, которые должны входить в искомый сегмент
+    // Набор символов, которые должны входить в искомый сегмент
     char sep [10]=", ";
     // Переменная, в которую будут заноситься начальные адреса частей
     // строки str
     char *istr;
-    printf ("Input FIO:\n");
+    printf ("\nEnter the name, ward and diagnosis of the patient (name, ward, diagnosis):\n");
     fgets(str, 100, stdin);
     fseek(stdin,0,SEEK_END);
-    printf(str);
     // Выделение первой части строки
     istr = strtok (str,sep);
     strcpy(thisdata.cFullName, istr);
@@ -108,7 +80,7 @@ void Decrease(){
 }
 
 void Output(size_t n){
-    puts("-------------------------------------------------------------------------");
+    puts("\n-------------------------------------------------------------------------");
     puts("|\t#\t|\tFCs\t|\tWard\t|\tDiagnosis\t|");
     puts("-------------------------------------------------------------------------");
     for(int i = 0; i < n; i++){

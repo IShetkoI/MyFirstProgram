@@ -23,116 +23,183 @@
 #define sHello(bFirstLaunch) ((bFirstLaunch) ? ("\nHello, you have started the \"Hospital patient database\".\nTo get help, type \"-h\" and press \"Enter\"\n\nWhat can I do for you?") : ("\nWhat can I do for you?"))
 #define sHelp "\nWhen you type \"-i\" I will prompt you to enter the new patient's data, viz: The patient's name, room number, and diagnosis.\n\nBy typing \"-d\" I will prompt you to enter the name of the patient to be removed from the database.\n\nIf you type \"-all\" I will display a table with all the patients in it.\n\nIf you type \"-e\" I will terminate the program."
 
-struct patient *struct_array;
-int size_array = 0;
+struct patient *aPatientsDB;
+int iSizeDB = 0;
 
 struct patient {
-    char cFullName[100];
-    char cRoomNumber[100];
-    char cDiagnosis[100];
+    char *cFullName;
+    char *cWardNumber;
+    char *cDiagnosis;
 };
 
-void Help(){
+/*!
+Получение от пользователя через консоль строки
+\param iLengthSentence Длина введенной пользователем строки
+\return cSentence Строка, введенная пользователем
+*/
+char *getString(int *iLengthSentence) {
+    *iLengthSentence = 0;
+    int iCapacitySentence = 1;
+    char *cSentence = (char *) malloc(sizeof(char));
+    char cSymbol = getchar();
+
+    while (cSymbol != '\n') {
+        cSentence[(*iLengthSentence)++] = cSymbol;
+
+        if (*iLengthSentence >= iCapacitySentence) {
+            iCapacitySentence *= 2;
+            cSentence = (char *) realloc(cSentence, iCapacitySentence *
+                                                    sizeof(char));
+        }
+
+        cSymbol = getchar();
+    }
+
+    cSentence[*iLengthSentence] = '\0';
+
+    return cSentence;
+}
+
+/*!
+Выводит список команд
+*/
+void help() {
     puts(sHelp);
 }
 
-void resize_array(size_t n){
-    struct_array = realloc(struct_array, n * sizeof *struct_array);
+/*!
+Изменяет размер выделяемой памяти для базы пациентов
+\param n Количество элементов в массиве
+*/
+void resizeArray(size_t n) {
+    aPatientsDB = realloc(aPatientsDB, n * sizeof *aPatientsDB);
 }
 
-struct patient get_data(void){
-    struct patient thisdata;
-    char str [100];
-    // Набор символов, которые должны входить в искомый сегмент
-    char sep [10]=", ";
-    // Переменная, в которую будут заноситься начальные адреса частей
-    // строки str
-    char *istr;
-    printf ("\nEnter the name, ward and diagnosis of the patient (name, ward, diagnosis):\n");
-    fgets(str, 100, stdin);
-    fseek(stdin,0,SEEK_END);
-    // Выделение первой части строки
-    istr = strtok (str,sep);
-    strcpy(thisdata.cFullName, istr);
-    // Выделение последующих частей
-    if (istr != NULL)
-    {
-        istr = strtok (NULL,sep);
-        strcpy(thisdata.cRoomNumber, istr);
+/*!
+Создает новый объект структуры
+\return stNewPatient Данные нового пациента
+*/
+struct patient getData(void) {
+    struct patient stNewPatient;
+    stNewPatient.cFullName = (char *) malloc(sizeof(char));
+    stNewPatient.cWardNumber = (char *) malloc(sizeof(char));
+    stNewPatient.cDiagnosis = (char *) malloc(sizeof(char));
+
+    printf("\nEnter the name, ward and diagnosis of the patient (name, ward, diagnosis):\n");
+
+    int iLengthString;
+    char cSeparator[10] = ", ";
+    char *cPartSentence;
+    char *cSentence = getString(&iLengthString);
+
+    cPartSentence = strtok(cSentence, cSeparator);
+    stNewPatient.cFullName = (char *) realloc(stNewPatient.cFullName, strlen(cPartSentence) * sizeof(char));
+    strcpy(stNewPatient.cFullName, cPartSentence);
+
+    if (cPartSentence != NULL) {
+        cPartSentence = strtok(NULL, cSeparator);
+        stNewPatient.cWardNumber = (char *) realloc(stNewPatient.cWardNumber, strlen(cPartSentence) * sizeof(char));
+        strcpy(stNewPatient.cWardNumber, cPartSentence);
     }
-    if (istr != NULL)
-    {
-        istr = strtok (NULL,sep);
-        istr[strlen(istr) - 1] = 0;
-        strcpy(thisdata.cDiagnosis, istr);
+
+    if (cPartSentence != NULL) {
+        cPartSentence = strtok(NULL, cSeparator);
+        stNewPatient.cDiagnosis = (char *) realloc(stNewPatient.cDiagnosis, strlen(cPartSentence) * sizeof(char));
+        strcpy(stNewPatient.cDiagnosis, cPartSentence);
     }
-    return thisdata;
+
+    free(cSentence);
+
+    return stNewPatient;
 }
 
-void Increase(){
-    resize_array(++size_array);
-    struct_array[--size_array]=get_data();
-    ++size_array;
+/*!
+Добавление нового пациента в базу данных
+*/
+void increase() {
+    resizeArray(++iSizeDB);
+    aPatientsDB[--iSizeDB] = getData();
+    ++iSizeDB;
 }
 
-void shift(int i)
-{
-    for (; i < size_array - 1; i++) { struct_array[i] = struct_array[i + 1]; }
-    size_array--;
+/*!
+Удаление элемента в массиве
+*/
+void shift(int i) {
+    for (; i < iSizeDB - 1; i++) { aPatientsDB[i] = aPatientsDB[i + 1]; }
+    iSizeDB--;
 }
 
-void Decrease(){
-    printf ("\nEnter the name of the patient to be removed from the database:\n");
-    char str [100];
-    fgets(str, 100, stdin);
-    fseek(stdin,0,SEEK_END);
-    str[strlen(str)-1] = '\0';
-    for(int i = 0; i < size_array; i++){
-        if(strcmp(str, struct_array[i].cFullName) == 0){
+/*!
+Удаляет пользователя их базы данных
+*/
+void decrease() {
+    printf("\nEnter the name of the patient to be removed from the database:\n");
+    int iLengthSentence;
+    char *cSentence = getString(&iLengthSentence);
+    for (int i = 0; i < iSizeDB; i++) {
+        if (strcmp(cSentence, aPatientsDB[i].cFullName) == 0) {
             shift(i);
             printf("\nThe patient has been found and removed from the database\n");
-            resize_array(size_array);
+            resizeArray(iSizeDB);
             break;
         }
     }
 }
 
-void Output(){
+/*!
+Выводит в виде таблицы всех пациентов
+*/
+void all() {
     puts("\n-------------------------------------------------------------------------");
-    puts("|\t#\t|\tFCs\t|\tWard\t|\tDiagnosis\t|");
+    puts("|\t#\t|\tFCs\t|\tWard \t|\tDiagnosis\t|");
     puts("-------------------------------------------------------------------------");
-    for(int i = 0; i < size_array; i++){
-        printf("|\t%i\t|\t%s\t|\t%s\t|\t%s%*s\t|\n", i, struct_array[i].cFullName, struct_array[i].cRoomNumber, struct_array[i].cDiagnosis, 5, " ");
+
+    for (int i = 0; i < iSizeDB; i++) {
+        printf("|\t%i\t|\t%s\t|\t%s\t|\t%s%*s\t|\n", i, aPatientsDB[i].cFullName, aPatientsDB[i].cWardNumber,
+               aPatientsDB[i].cDiagnosis, 5, " ");
         puts("-------------------------------------------------------------------------");
     }
 }
 
-void All(){
-    Output(size_array);
-}
-
-int Exit(){
-    free(struct_array);
+/*!
+Завершает программу
+*/
+int Exit() {
+    free(aPatientsDB);
     exit(EXIT_SUCCESS);
 }
 
 int main() {
     char cCommand[2];
     char bFirstLaunch = 1;
-    struct_array = malloc(8 * sizeof(int));
-    void (*operation[5])() = {Help,  Increase, Decrease, All, Exit};
-    for(;;){
-        puts(sHello(bFirstLaunch));
+    aPatientsDB = malloc(8 * sizeof(int));
+    void (*Operation[5])() = {help, increase, decrease, all, Exit};
+
+    for (;;) {
         bFirstLaunch = 0;
+
+        puts(sHello(bFirstLaunch));
         scanf("%s", cCommand);
         fflush(stdin);
-        if(cCommand[0] == '-')
-            switch(cCommand[1]){
-                case 'h': operation[0](); break;
-                case 'i': operation[1](); break;
-                case 'd': operation[2](size_array); break;
-                case 'a': operation[3](); break;
-                case 'e': operation[4](); break;
+
+        if (cCommand[0] == '-')
+            switch (cCommand[1]) {
+                case 'h':
+                    Operation[0]();
+                    break;
+                case 'i':
+                    Operation[1]();
+                    break;
+                case 'd':
+                    Operation[2](iSizeDB);
+                    break;
+                case 'a':
+                    Operation[3]();
+                    break;
+                case 'e':
+                    Operation[4]();
+                    break;
             }
     }
     return 0;

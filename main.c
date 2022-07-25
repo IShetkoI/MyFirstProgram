@@ -75,15 +75,33 @@ void Increase(){
     ++size_array;
 }
 
-void Decrease(){
-
+void shift(int i)
+{
+    for (; i < size_array - 1; i++) { struct_array[i] = struct_array[i + 1]; }
+    size_array--;
 }
 
-void Output(size_t n){
+void Decrease(){
+    printf ("\nEnter the name of the patient to be removed from the database:\n");
+    char str [100];
+    fgets(str, 100, stdin);
+    fseek(stdin,0,SEEK_END);
+    str[strlen(str)-1] = '\0';
+    for(int i = 0; i < size_array; i++){
+        if(strcmp(str, struct_array[i].cFullName) == 0){
+            shift(i);
+            printf("\nThe patient has been found and removed from the database\n");
+            resize_array(size_array);
+            break;
+        }
+    }
+}
+
+void Output(){
     puts("\n-------------------------------------------------------------------------");
     puts("|\t#\t|\tFCs\t|\tWard\t|\tDiagnosis\t|");
     puts("-------------------------------------------------------------------------");
-    for(int i = 0; i < n; i++){
+    for(int i = 0; i < size_array; i++){
         printf("|\t%i\t|\t%s\t|\t%s\t|\t%s%*s\t|\n", i, struct_array[i].cFullName, struct_array[i].cRoomNumber, struct_array[i].cDiagnosis, 5, " ");
         puts("-------------------------------------------------------------------------");
     }
@@ -112,7 +130,7 @@ int main() {
             switch(cCommand[1]){
                 case 'h': operation[0](); break;
                 case 'i': operation[1](); break;
-                case 'd': operation[2](); break;
+                case 'd': operation[2](size_array); break;
                 case 'a': operation[3](); break;
                 case 'e': operation[4](); break;
             }
